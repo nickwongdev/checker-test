@@ -1,0 +1,8 @@
+/bin
+/apt_generated
+/target
+/.settings
+/.idea
+.classpath
+.project
+*.iml

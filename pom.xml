@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.nickwongdev</groupId>
+	<artifactId>checker-test</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<properties>
+		<org.checkerframework.version>2.3.2</org.checkerframework.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.nickwongdev</groupId>
+			<artifactId>checker-test-lib</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.checkerframework</groupId>
+			<artifactId>checker-qual</artifactId>
+			<version>${org.checkerframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.checkerframework</groupId>
+			<artifactId>checker</artifactId>
+			<version>${org.checkerframework.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.checkerframework</groupId>
+			<artifactId>jdk8</artifactId>
+			<version>${org.checkerframework.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.nickwongdev</groupId>
+									<artifactId>checker-test-stubs</artifactId>
+									<version>1.0-SNAPSHOT</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${project.build.directory}/stubs</outputDirectory>
+									<includes>**/*.astub</includes>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+					<execution>
+						<id>prepare-dependencies</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>properties</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+
+				<executions>
+					<execution>
+						<id>default-compile</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<encoding>UTF-8</encoding>
+							<source>1.8</source>
+							<target>1.8</target>
+							<showWarnings>true</showWarnings>
+							<annotationProcessors>
+								<annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker
+								</annotationProcessor>
+							</annotationProcessors>
+							<compilerArgs>
+								<arg>-AprintErrorStack</arg>
+								<arg>-AstubDebug</arg>
+								<arg>-Astubs=${project.build.directory}/stubs</arg>
+								<arg>-AuseDefaultsForUncheckedCode=bytecode</arg>
+								<!--suppress MavenModelInspection -->
+								<arg>-Xbootclasspath/p:${org.checkerframework:jdk8:jar}</arg>
+							</compilerArgs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
